@@ -1,0 +1,8 @@
+[package]
+name = "wiredtiger-sys"
+version = "0.1.0"
+authors = ["David Li <davidli2010@foxmail.com>"]
+edition = "2018"
+
+[build-dependencies]
+bindgen = "^0.52.0"

@@ -1,0 +1,8 @@
+[package]
+name = "wiredtiger"
+version = "0.1.0"
+authors = ["David Li <davidli2010@foxmail.com>"]
+edition = "2018"
+
+[dependencies]
+wiredtiger-sys = { path = "wiredtiger-sys" }
