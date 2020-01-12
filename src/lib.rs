@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! A idiomatic Rust wrapper for WiredTiger API.
+//! An idiomatic Rust wrapper for WiredTiger API.
 
 #[macro_use]
 pub mod error;
