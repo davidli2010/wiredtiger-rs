@@ -1,4 +1,4 @@
-// Copyright 2020 David Li <davidli2010@foxmail.com>
+// Copyright 2020 David Li
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,5 +17,9 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
+#![allow(clippy::redundant_static_lifetimes)]
+#![allow(clippy::unreadable_literal)]
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+mod bindings;
+
+pub use bindings::*;

@@ -1,4 +1,4 @@
-// Copyright 2020 David Li <davidli2010@foxmail.com>
+// Copyright 2020 David Li
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

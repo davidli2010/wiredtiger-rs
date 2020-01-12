@@ -1,4 +1,4 @@
-// Copyright 2020 David Li <davidli2010@foxmail.com>
+// Copyright 2020 David Li
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@ use std::path::PathBuf;
 fn main() {
     let wt_home =
         env::var("WIREDTIGER_HOME").expect("WIREDTIGER_HOME environment variable is not defined");
-    let out_dir = env::var("OUT_DIR").expect("OUT_DIR environment variable is not defined");
 
     println!("cargo:rustc-link-search=native={}/lib", wt_home);
     println!("cargo:rustc-link-lib=static=wiredtiger");
     println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed={}/include", wt_home);
+    println!("cargo:rerun-if-env-changed=WIREDTIGER_HOME");
 
     bindgen::Builder::default()
         .clang_arg(format!("-I{}/include", wt_home))
@@ -37,6 +38,6 @@ fn main() {
         .rustfmt_bindings(true)
         .generate()
         .expect("Unable to generate wiredtiger's bindings")
-        .write_to_file(PathBuf::from(out_dir).join("bindings.rs"))
+        .write_to_file(PathBuf::from("src/bindings.rs"))
         .expect("Unable to write wiredtiger's bindings");
 }
