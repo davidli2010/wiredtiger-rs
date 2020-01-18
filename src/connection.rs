@@ -15,14 +15,18 @@
 //! A connection to a WiredTiger database.
 
 use crate::error::Result;
+use crate::session::Session;
 use std::ffi::{CStr, CString};
 use std::path::Path;
 use std::ptr;
-use wiredtiger_sys::{wiredtiger_open, WT_CONNECTION};
+use wiredtiger_sys::{wiredtiger_open, WT_CONNECTION, WT_SESSION};
 
 pub struct Connection {
     inner: Option<*mut WT_CONNECTION>,
 }
+
+unsafe impl Send for Connection {}
+unsafe impl Sync for Connection {}
 
 macro_rules! conn_api {
     ($conn: ident, $api: ident) => {
@@ -96,6 +100,22 @@ impl Connection {
         let (conn, is_new) = conn_api!(self, is_new);
         unsafe { is_new(conn) != 0 }
     }
+
+    pub fn open_session<C: AsRef<str>>(&self, config: C) -> Result<Session> {
+        let (conn, open_session) = conn_api!(self, open_session);
+        let c_config = CString::new(config.as_ref().as_bytes()).unwrap();
+        let mut session: *mut WT_SESSION = ptr::null_mut();
+        unsafe {
+            wt_try!(open_session(
+                conn,
+                ptr::null_mut(),
+                c_config.as_ptr(),
+                &mut session as *mut *mut WT_SESSION
+            ));
+            assert!(!session.is_null());
+            Ok(Session::new_unchecked(session))
+        }
+    }
 }
 
 impl Drop for Connection {
@@ -111,23 +131,12 @@ impl Drop for Connection {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn ensure_wt_home<T: AsRef<Path>>(home: T, clear: bool) {
-        let home = home.as_ref();
-        if home.exists() {
-            if clear {
-                std::fs::remove_dir_all(home).unwrap();
-                std::fs::create_dir(home).unwrap();
-            }
-        } else {
-            std::fs::create_dir(home).unwrap();
-        }
-    }
+    use crate::test_utils;
 
     #[test]
     fn test_connection() {
-        let home = "target/wt_conn";
-        ensure_wt_home(home, true);
+        let home = "target/wt_connection";
+        test_utils::ensure_wt_home(home, true);
         let mut conn = Connection::open(home, "create").unwrap();
         assert_eq!(conn.get_home(), home);
         assert!(conn.is_new());

@@ -12,15 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! An idiomatic Rust wrapper for WiredTiger API.
+//! Test Utilities.
 
-#[macro_use]
-pub mod error;
-pub mod connection;
-pub mod session;
+use std::path::Path;
 
-pub use connection::Connection;
-pub use session::Session;
-
-#[cfg(test)]
-mod test_utils;
+/// Ensure the WiredTiger's home is existed.
+///
+/// `home` is the directory of WiredTiger, we'll create it if it's not existed.
+/// `clear` indicates whether to clean up the `home`.
+pub fn ensure_wt_home<T: AsRef<Path>>(home: T, clear: bool) {
+    let home = home.as_ref();
+    if home.exists() {
+        if clear {
+            std::fs::remove_dir_all(home).unwrap();
+            std::fs::create_dir(home).unwrap();
+        }
+    } else {
+        std::fs::create_dir(home).unwrap();
+    }
+}
