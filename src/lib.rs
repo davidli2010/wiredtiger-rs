@@ -17,9 +17,11 @@
 #[macro_use]
 pub mod error;
 pub mod connection;
+pub mod cursor;
 pub mod session;
 
 pub use connection::Connection;
+pub use cursor::Cursor;
 pub use session::Session;
 
 #[cfg(test)]

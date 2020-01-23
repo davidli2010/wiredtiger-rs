@@ -15,10 +15,11 @@
 //! A context for performing database operations.
 
 use crate::error::Result;
-use crate::Connection;
+use crate::{Connection, Cursor};
 use std::ffi::CString;
 use std::marker::PhantomData;
-use wiredtiger_sys::WT_SESSION;
+use std::ptr;
+use wiredtiger_sys::{WT_CURSOR, WT_SESSION};
 
 macro_rules! session_api {
     ($session: ident, $api: ident) => {
@@ -79,6 +80,26 @@ impl<'a> Session<'a> {
             wt_try!(drop(session, c_name.as_ptr(), c_config.as_ptr()));
         }
         Ok(())
+    }
+
+    pub fn open_cursor<U: AsRef<str>, C: AsRef<str>>(&self, uri: U, config: C) -> Result<Cursor> {
+        let (session, open_cursor) = session_api!(self, open_cursor);
+
+        let c_uri = CString::new(uri.as_ref().as_bytes()).unwrap();
+        let c_config = CString::new(config.as_ref().as_bytes()).unwrap();
+
+        let mut cursor: *mut WT_CURSOR = ptr::null_mut();
+        unsafe {
+            wt_try!(open_cursor(
+                session,
+                c_uri.as_ptr(),
+                ptr::null_mut(),
+                c_config.as_ptr(),
+                &mut cursor as *mut *mut WT_CURSOR
+            ));
+            assert!(!cursor.is_null());
+            Ok(Cursor::new_unchecked(cursor))
+        }
     }
 }
 
