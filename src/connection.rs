@@ -131,12 +131,12 @@ impl Drop for Connection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils;
+    use test_utils;
 
     #[test]
     fn test_connection() {
         let home = "target/wt_connection";
-        test_utils::ensure_wt_home(home, true);
+        test_utils::make_work_dir(home, true);
         let mut conn = Connection::open(home, "create").unwrap();
         assert_eq!(conn.get_home(), home);
         assert!(conn.is_new());

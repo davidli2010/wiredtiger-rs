@@ -6,3 +6,6 @@ edition = "2018"
 
 [dependencies]
 wiredtiger-sys = { path = "wiredtiger-sys" }
+
+[dev-dependencies]
+test_utils = { path = "test_utils" }

@@ -23,6 +23,3 @@ pub mod session;
 pub use connection::Connection;
 pub use cursor::Cursor;
 pub use session::Session;
-
-#[cfg(test)]
-mod test_utils;

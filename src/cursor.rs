@@ -59,12 +59,13 @@ impl<'a> Drop for Cursor<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{test_utils, Connection};
+    use crate::Connection;
+    use test_utils;
 
     #[test]
     fn test_open_cursor() {
         let home = "target/wt_open_cursor";
-        test_utils::ensure_wt_home(home, false);
+        test_utils::make_work_dir(home, false);
         let conn = Connection::open(home, "create").unwrap();
         let session = conn.open_session("").unwrap();
         session

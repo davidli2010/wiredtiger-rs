@@ -116,12 +116,12 @@ impl<'a> Drop for Session<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils;
+    use test_utils;
 
     #[test]
     fn test_open_session() {
         let home = "target/wt_open_session";
-        test_utils::ensure_wt_home(home, false);
+        test_utils::make_work_dir(home, false);
         let conn = Connection::open(home, "create").unwrap();
         let mut session = conn.open_session("").unwrap();
         session.close("").unwrap();
@@ -130,7 +130,7 @@ mod tests {
     #[test]
     fn test_create_table() {
         let home = "target/wt_create_table";
-        test_utils::ensure_wt_home(home, false);
+        test_utils::make_work_dir(home, false);
         let conn = Connection::open(home, "create").unwrap();
         let session = conn.open_session("").unwrap();
         session
